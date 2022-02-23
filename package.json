@@ -1,0 +1,26 @@
+{
+  "name": "uint512",
+  "version": "1.0.0",
+  "description": "Solidity Uint512 Math Library",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "bigint-isqrt": "^0.2.1",
+    "random-bigint": "^0.0.1"
+  },
+  "scripts": {
+    "test": "truffle test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SimonSuckut/Solidity_Uint512.git"
+  },
+  "author": "Simon Suckut",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/SimonSuckut/Solidity_Uint512/issues"
+  },
+  "homepage": "https://github.com/SimonSuckut/Solidity_Uint512#readme"
+}
