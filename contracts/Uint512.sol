@@ -266,7 +266,7 @@ library Uint512 {
 			a0 := shl(shift, a0)
 		}
 		uint256 sp = sqrt(a1);
-        uint256 rp = a1 - (sp * sp);
+        	uint256 rp = a1 - (sp * sp);
 		unchecked {
 			uint256 nom;
 			uint256 denom;
