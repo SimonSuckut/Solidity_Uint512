@@ -9,11 +9,27 @@ library Uint512 {
 	/// @param b A uint256 representing the second factor.
 	/// @return r0 The result as an uint512. r0 contains the lower bits.
 	/// @return r1 The higher bits of the result.
-	function mul512(uint256 a, uint256 b) public pure returns (uint256 r0, uint256 r1) {
+	function mul256x256(uint256 a, uint256 b) public pure returns (uint256 r0, uint256 r1) {
 		assembly {
 			let mm := mulmod(a, b, not(0))
 			r0 := mul(a, b)
 			r1 := sub(sub(mm, r0), lt(mm, r0))
+		}
+	}
+
+	/// @notice Calculates the product of two uint512 and uint256
+	/// @dev Used the chinese remainder theoreme
+	/// @param a0 A uint256 representing lower bits of the first factor.
+	/// @param a1 A uint256 representing higher bits of the first factor.
+	/// @param b A uint256 representing the second factor.
+	/// @return r0 The result as an uint512. r0 contains the lower bits.
+	/// @return r1 The higher bits of the result.
+	function mul512x256(uint256 a0, uint256 a1, uint256 b) public pure returns (uint256 r0, uint256 r1) {
+		assembly {
+			let mm := mulmod(a0, b, not(0))
+			r0 := mul(a0, b)
+			r1 := sub(sub(mm, r0), lt(mm, r0))
+			r1 := add(r1, mul(a1, b))
 		}
 	}
 
@@ -24,7 +40,7 @@ library Uint512 {
 	/// @return r0 The result as an uint512. r0 contains the lower bits.
 	/// @return r1 The higher bits of the result.
 	/// @return r2 The remainder.
-	function mulMod512(uint256 a, uint256 b, uint256 c) public pure returns (uint256 r0, uint256 r1, uint256 r2) {
+	function mulMod256x256(uint256 a, uint256 b, uint256 c) public pure returns (uint256 r0, uint256 r1, uint256 r2) {
 		assembly {
 			let mm := mulmod(a, b, not(0))
 			r0 := mul(a, b)
@@ -40,7 +56,7 @@ library Uint512 {
 	/// @param b1 A uint256 representing the higher bits of the seccond addend.
 	/// @return r0 The result as an uint512. r0 contains the lower bits.
 	/// @return r1 The higher bits of the result.
-	function add512(uint256 a0, uint256 a1, uint256 b0, uint256 b1) public pure returns (uint256 r0, uint256 r1) {
+	function add512x512(uint256 a0, uint256 a1, uint256 b0, uint256 b1) public pure returns (uint256 r0, uint256 r1) {
 		assembly {
 			r0 := add(a0, b0)
 			r1 := add(add(a1, b1), lt(r0, a0))
@@ -54,7 +70,7 @@ library Uint512 {
 	/// @param b1 A uint256 representing the higher bits of the subtrahend.
 	/// @return r0 The result as an uint512. r0 contains the lower bits.
 	/// @return r1 The higher bits of the result.
-	function sub512(uint256 a0, uint256 a1, uint256 b0, uint256 b1) public pure returns (uint256 r0, uint256 r1) {
+	function sub512x512(uint256 a0, uint256 a1, uint256 b0, uint256 b1) public pure returns (uint256 r0, uint256 r1) {
 		assembly {
 			r0 := sub(a0, b0)
 			r1 := sub(sub(a1, b1), lt(a0, b0))
@@ -70,7 +86,7 @@ library Uint512 {
 	/// @param b A uint256 representing the denominator.
 	/// @param rem A uint256 representing the remainder of the devision. The algorithm is cheaper to compute if the remainder is known. The remainder often be retreived cheaply using the mulmod and addmod operations.
 	/// @return r The result as an uint256. Result must have at most 256 bit.
-	function divRem512(uint256 a0, uint256 a1, uint256 b, uint256 rem) public pure returns (uint256 r) {
+	function divRem512x256(uint256 a0, uint256 a1, uint256 b, uint256 rem) public pure returns (uint256 r) {
 		assembly {
 			// subtract the remainder
 			a1 := sub(a1, lt(a0, rem))
@@ -117,7 +133,7 @@ library Uint512 {
 	/// @param a1 A uint256 representing the high bits of the nominator.
 	/// @param b A uint256 representing the denominator.
 	/// @return r The result as an uint256. Result must have at most 256 bit.
-	function div512(uint256 a0, uint256 a1, uint256 b) public pure returns (uint256 r) {
+	function div512x256(uint256 a0, uint256 a1, uint256 b) public pure returns (uint256 r) {
 		assembly {
 			// calculate the remainder
 			let rem := mulmod(a1, not(0), b)
@@ -164,7 +180,7 @@ library Uint512 {
 	/// @dev Uses the Babylonian method https://en.wikipedia.org/wiki/Methods_of_computing_square_roots#Babylonian_method.
 	/// @param x The uint256 number for which to calculate the square root.
 	/// @return s The square root as an uint256.
-	function sqrt(uint256 x) public pure returns (uint256 s) {
+	function sqrt256(uint256 x) public pure returns (uint256 s) {
 		
 		if (x == 0) return 0;
 
@@ -222,7 +238,7 @@ library Uint512 {
 	function sqrt512(uint256 a0, uint256 a1) public pure returns (uint256 s) {
 		
 		// A simple 256 bit square root is sufficient
-		if (a1 == 0) return sqrt(a0);
+		if (a1 == 0) return sqrt256(a0);
 
 		// The used algorithm has the pre-condition a1 >= 2**254
 		uint256 shift;
@@ -260,7 +276,7 @@ library Uint512 {
 			a0 := shl(shift, a0)
 		}
 		
-		uint256 sp = sqrt(a1);
+		uint256 sp = sqrt256(a1);
         uint256 rp = a1 - (sp * sp);
 
 		uint256 nom;

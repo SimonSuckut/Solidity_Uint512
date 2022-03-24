@@ -9,7 +9,7 @@ This project demonstrates uint512 representation and arithmetic for the solidity
 
 * Subtraction (512 - 512 → 512), 
 
-* Multiplication (256 × 256 → 512), 
+* Multiplication (256 × 256 → 512), (512 × 256 → 512)
 
 * Division (512 / 256 → 256) 
 

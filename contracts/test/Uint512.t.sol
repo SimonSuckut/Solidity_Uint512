@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8;
 
-import "ds-test/test.sol";
+import "../../lib/ds-test/src/test.sol";
 
 contract Uint512Test is DSTest {
     function setUp() public {}

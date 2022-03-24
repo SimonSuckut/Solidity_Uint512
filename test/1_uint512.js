@@ -10,21 +10,51 @@ const interations = 10_000;
 
 contract("Uint512", accounts => {
 
-    it("Mul512", async () => {
+    it("Add512x512", async () => {
+        let uint512 = await Uint512.deployed();
+        for (let i = 0; i < interations; i++) {
+            let rndA = randomBig(512);
+            let rndB = randomBig(512);
+            let res = await uint512.add512x512.call(rndA % modulus, rndA / modulus, rndB % modulus, rndB / modulus);
+            assert.equal(BigInt(res[0]) + (BigInt(res[1]) * modulus), (rndA + rndB) & (2n**512n - 1n));
+        }
+    })
+
+    it("Sub512x512", async () => {
+        let uint512 = await Uint512.deployed();
+        for (let i = 0; i < interations; i++) {
+            let rndA = randomBig(512);
+            let rndB = randomBig(512);
+            let res = await uint512.sub512x512.call(rndA % modulus, rndA / modulus, rndB % modulus, rndB / modulus);
+            assert.equal(BigInt(res[0]) + (BigInt(res[1]) * modulus), (rndA - rndB) & (2n**512n - 1n));
+        }
+    })
+
+    it("Mul256x256", async () => {
         let uint512 = await Uint512.deployed();
         for (let i = 0; i < interations; i++) {
             let rndA = randomBig(256);
             let rndB = randomBig(256);
-            let res = await uint512.mul512.call(rndA, rndB);
+            let res = await uint512.mul256x256.call(rndA, rndB);
             assert.equal(BigInt(res[0]) + (BigInt(res[1]) * modulus), rndA * rndB);
         }
     })
 
-    it("Sqrt", async () => {
+    it("Mul512x256", async () => {
+        let uint512 = await Uint512.deployed();
+        for (let i = 0; i < interations; i++) {
+            let rndA = randomBig(512);
+            let rndB = randomBig(256);
+            let res = await uint512.mul512x256.call(rndA % modulus, rndA / modulus, rndB);
+            assert.equal(BigInt(res[0]) + (BigInt(res[1]) * modulus), (rndA * rndB) & (2n**512n - 1n));
+        }
+    })
+
+    it("Sqrt256", async () => {
         let uint512 = await Uint512.deployed();
         for (let i = 0; i < interations; i++) {
             let rnd = randomBig(256);
-            let res = await uint512.sqrt.call(rnd);
+            let res = await uint512.sqrt256.call(rnd);
             assert.equal(res, sqrtBig(rnd));
         }
     })
@@ -39,7 +69,7 @@ contract("Uint512", accounts => {
         }
     })
 
-    it("DivRem512", async () => {
+    it("DivRem512x256", async () => {
         let uint512 = await Uint512.deployed();
         for (let i = 0; i < interations; i++) {
             let rndA = randomBig(256);
@@ -51,12 +81,12 @@ contract("Uint512", accounts => {
                 rem = rem / 2n;
             }
             let nom = rndA * rndB + rem;
-            let res = await uint512.divRem512.call(nom % modulus, nom / modulus, denom, rem);
+            let res = await uint512.divRem512x256.call(nom % modulus, nom / modulus, denom, rem);
             assert.equal(res, rndA);
         }
     })
 
-    it("Div512", async () => {
+    it("Div512x256", async () => {
         let uint512 = await Uint512.deployed();
         for (let i = 0; i < interations; i++) {
             let rndA = randomBig(256);
@@ -68,7 +98,7 @@ contract("Uint512", accounts => {
                 rem = rem / 2n;
             }
             let nom = rndA * denom + rem;
-            let res = await uint512.div512.call(nom % modulus, nom / modulus, denom);
+            let res = await uint512.div512x256.call(nom % modulus, nom / modulus, denom);
             assert.equal(res, nom / denom);
         }
     })
